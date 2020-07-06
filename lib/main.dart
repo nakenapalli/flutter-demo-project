@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import './set_values.dart';
+import './counter_bloc.dart';
+import './counter_event.dart';
 
 void main() {
   runApp(MyApp());
@@ -34,6 +36,8 @@ class _MyHomePageState extends State<MyHomePage> {
   int _counter;
   int _increment;
 
+  final _counterBloc = CounterBloc();
+
   _MyHomePageState(this._counter, this._increment);
 
   void _incrementCounter() {
@@ -62,57 +66,64 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Row(
-              mainAxisSize: MainAxisSize.min,
+        child: StreamBuilder(
+          stream: _counterBloc.counterOutput,
+          initialData: 0,
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Text('Counter value: ',
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 30)),
-                Text(
-                  '$_counter',
-                  style: Theme.of(context).textTheme.headline4,
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Text('Counter value: ',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 30)),
+                    Text(
+                      '${snapshot.data}',
+                      style: Theme.of(context).textTheme.headline4,
+                    ),
+                    SizedBox(width: 10),
+                    RaisedButton(
+                        shape: const StadiumBorder(),
+                        color: Colors.blue,
+                        splashColor: Colors.blue[200],
+                        textColor: Colors.white,
+                        onPressed: () =>
+                            _counterBloc.counterEventSink.add(IncrementEvent()),
+                        child: Text('Increase counter')),
+                  ],
                 ),
-                SizedBox(width: 10),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Text('Incrementing by: $_increment',
+                        style: TextStyle(fontSize: 20)),
+                    SizedBox(width: 10),
+                    RaisedButton(
+                        shape: const StadiumBorder(),
+                        color: Colors.blue,
+                        splashColor: Colors.blue[200],
+                        textColor: Colors.white,
+                        onPressed: _upIncrement,
+                        child: Text('Increase increment')),
+                  ],
+                ),
                 RaisedButton(
-                    shape: const StadiumBorder(),
-                    color: Colors.blue,
-                    splashColor: Colors.blue[200],
-                    textColor: Colors.white,
-                    onPressed: _incrementCounter,
-                    child: Text('Increase counter')),
-              ],
-            ),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Text('Incrementing by: $_increment',
-                    style: TextStyle(fontSize: 20)),
-                SizedBox(width: 10),
-                RaisedButton(
-                    shape: const StadiumBorder(),
-                    color: Colors.blue,
-                    splashColor: Colors.blue[200],
-                    textColor: Colors.white,
-                    onPressed: _upIncrement,
-                    child: Text('Increase increment')),
-              ],
-            ),
-            RaisedButton(
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => SetValues(
-                    counter: _counter,
-                    increment: _increment,
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SetValues(
+                        counter: _counter,
+                        increment: _increment,
+                      ),
+                    ),
                   ),
+                  child: Text("Set values manually"),
                 ),
-              ),
-              child: Text("Set values manually"),
-            ),
-          ],
+              ],
+            );
+          },
         ),
       ),
       floatingActionButton: FloatingActionButton(
@@ -122,5 +133,11 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Icon(Icons.refresh),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _counterBloc.dispose();
   }
 }
