@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import './set_values.dart';
 import './counter_bloc.dart';
-import './counter_event.dart';
+import './counter_state.dart';
 
 void main() {
   runApp(MyApp());
@@ -16,48 +17,27 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.blue,
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-        home: MyHomePage(title: 'Counter Widget', counter: 0, increment: 1));
+        home: MyHomePage(
+          title: 'Counter Widget',
+          state: CounterState.initial(),
+        ));
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title, this.counter, this.increment})
-      : super(key: key);
+  MyHomePage({Key key, this.title, this.state}) : super(key: key);
 
   final String title;
-  final int counter;
-  final int increment;
+  final CounterState state;
 
   @override
-  _MyHomePageState createState() => _MyHomePageState(counter, increment);
+  _MyHomePageState createState() => _MyHomePageState(CounterBloc(state));
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter;
-  int _increment;
+  final _counterBloc;
 
-  final _counterBloc = CounterBloc();
-
-  _MyHomePageState(this._counter, this._increment);
-
-  void _incrementCounter() {
-    setState(() {
-      _counter += _increment;
-    });
-  }
-
-  void _upIncrement() {
-    setState(() {
-      _increment++;
-    });
-  }
-
-  void _reset() {
-    setState(() {
-      _counter = 0;
-      _increment = 1;
-    });
-  }
+  _MyHomePageState(this._counterBloc);
 
   @override
   Widget build(BuildContext context) {
@@ -66,68 +46,64 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: Center(
-        child: StreamBuilder(
-          stream: _counterBloc.counterOutput,
-          initialData: 0,
-          builder: (BuildContext context, AsyncSnapshot snapshot) {
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Row(
-                  mainAxisSize: MainAxisSize.min,
+          child: BlocBuilder<CounterBloc, CounterState>(
+              bloc: _counterBloc,
+              builder: (context, CounterState state) {
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Text('Counter value: ',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 30)),
-                    Text(
-                      '${snapshot.data}',
-                      style: Theme.of(context).textTheme.headline4,
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Text('Counter value: ',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 30)),
+                        Text(
+                          '${state.counter}',
+                          style: Theme.of(context).textTheme.headline4,
+                        ),
+                        SizedBox(width: 10),
+                        RaisedButton(
+                            shape: const StadiumBorder(),
+                            color: Colors.blue,
+                            splashColor: Colors.blue[200],
+                            textColor: Colors.white,
+                            onPressed: () => _counterBloc.onIncrement(),
+                            child: Text('Increase counter')),
+                      ],
                     ),
-                    SizedBox(width: 10),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Text('Incrementing by: ${state.increment}',
+                            style: TextStyle(fontSize: 20)),
+                        SizedBox(width: 10),
+                        RaisedButton(
+                            shape: const StadiumBorder(),
+                            color: Colors.blue,
+                            splashColor: Colors.blue[200],
+                            textColor: Colors.white,
+                            onPressed: () => _counterBloc.onUpIncrement(),
+                            child: Text('Increase increment')),
+                      ],
+                    ),
                     RaisedButton(
-                        shape: const StadiumBorder(),
-                        color: Colors.blue,
-                        splashColor: Colors.blue[200],
-                        textColor: Colors.white,
-                        onPressed: () =>
-                            _counterBloc.counterEventSink.add(IncrementEvent()),
-                        child: Text('Increase counter')),
-                  ],
-                ),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Text('Incrementing by: $_increment',
-                        style: TextStyle(fontSize: 20)),
-                    SizedBox(width: 10),
-                    RaisedButton(
-                        shape: const StadiumBorder(),
-                        color: Colors.blue,
-                        splashColor: Colors.blue[200],
-                        textColor: Colors.white,
-                        onPressed: _upIncrement,
-                        child: Text('Increase increment')),
-                  ],
-                ),
-                RaisedButton(
-                  onPressed: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => SetValues(
-                        counter: _counter,
-                        increment: _increment,
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SetValues(
+                            counter: state.counter,
+                            increment: state.increment,
+                          ),
+                        ),
                       ),
+                      child: Text("Set values manually"),
                     ),
-                  ),
-                  child: Text("Set values manually"),
-                ),
-              ],
-            );
-          },
-        ),
-      ),
+                  ],
+                );
+              })),
       floatingActionButton: FloatingActionButton(
-        onPressed: _reset,
+        onPressed: _counterBloc.onReset(),
         splashColor: Colors.blue[200],
         tooltip: 'Refresh',
         child: Icon(Icons.refresh),
@@ -137,7 +113,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void dispose() {
+    _counterBloc.close();
     super.dispose();
-    _counterBloc.dispose();
   }
 }

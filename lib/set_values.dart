@@ -1,6 +1,7 @@
 import 'package:first_project/main.dart';
 import 'package:flutter/material.dart';
 import './main.dart';
+import './counter_state.dart';
 
 class SetValues extends StatefulWidget {
   final int counter;
@@ -38,9 +39,12 @@ class _SetValuesState extends State<SetValues> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => MyHomePage(
-                        title: "Counter Widget",
+                      title: "Counter Widget",
+                      state: CounterState(
                         counter: int.parse(_counterController.text),
-                        increment: int.parse(_incrementController.text)),
+                        increment: int.parse(_incrementController.text),
+                      ),
+                    ),
                   ),
                 ),
                 child: Text("Set"),
