@@ -3,29 +3,27 @@ import 'package:flutter/material.dart';
 import 'package:validators/validators.dart';
 
 class SetValues extends StatefulWidget {
-
-
   SetValues({Key key}) : super(key: key);
 
   @override
   _SetValuesState createState() => _SetValuesState();
 }
 
-class _SetValuesState extends State<SetValues> with WidgetsBindingObserver{
+class _SetValuesState extends State<SetValues> with WidgetsBindingObserver {
   final _counterController = TextEditingController();
   final _incrementController = TextEditingController();
   bool isSet = false;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       BlockProvider.of(context).currentValueStream.listen((event) {
-        if(isSet == false){
+        if (isSet == false) {
           _counterController.text = event.toString();
-          _incrementController.text = BlockProvider.of(context).incrementBy.toString();
+          _incrementController.text =
+              BlockProvider.of(context).incrementBy.toString();
           isSet = true;
         }
       });
@@ -50,16 +48,16 @@ class _SetValuesState extends State<SetValues> with WidgetsBindingObserver{
                 keyboardType: TextInputType.number,
               ),
               RaisedButton(
-                onPressed: (){
-
-                  if(isNumeric(_counterController.text) && isNumeric(_incrementController.text)){
-                    BlockProvider.of(context).changeIncrementDecrement(int.tryParse(_counterController.text),int.tryParse(_incrementController.text));
+                onPressed: () {
+                  if (isNumeric(_counterController.text) &&
+                      isNumeric(_incrementController.text)) {
+                    BlockProvider.of(context).changeIncrementDecrement(
+                        int.tryParse(_counterController.text),
+                        int.tryParse(_incrementController.text));
                     Navigator.pop(context);
-                  }
-                  else{
+                  } else {
                     print("Show a dialog box throws error");
                   }
-
                 },
                 child: Text("Set"),
               )

@@ -5,8 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:first_project/block/block.dart';
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title})
-      : super(key: key);
+  MyHomePage({Key key, this.title}) : super(key: key);
 
   final String title;
 
@@ -14,13 +13,9 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> with  WidgetsBindingObserver{
-
-
-
+class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -28,13 +23,12 @@ class _MyHomePageState extends State<MyHomePage> with  WidgetsBindingObserver{
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<int>(
       stream: BlockProvider.of(context).currentValueStream,
-      builder: (context,snap){
-        if(!snap.hasData || snap.hasError){
+      builder: (context, snap) {
+        if (!snap.hasData || snap.hasError) {
           return showLoading();
         }
         return Scaffold(
@@ -49,8 +43,8 @@ class _MyHomePageState extends State<MyHomePage> with  WidgetsBindingObserver{
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     Text('Counter value: ',
-                        style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 30)),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 30)),
                     Text(
                       '${snap.data}',
                       style: Theme.of(context).textTheme.headline4,
@@ -61,8 +55,9 @@ class _MyHomePageState extends State<MyHomePage> with  WidgetsBindingObserver{
                         color: Colors.blue,
                         splashColor: Colors.blue[200],
                         textColor: Colors.white,
-                        onPressed: (){
-                          BlockProvider.of(context).changeCurrentValue(ActionsTaken.INCREMENT);
+                        onPressed: () {
+                          BlockProvider.of(context)
+                              .changeCurrentValue(ActionsTaken.INCREMENT);
                         },
                         child: Text('Increase counter')),
                   ],
@@ -70,7 +65,8 @@ class _MyHomePageState extends State<MyHomePage> with  WidgetsBindingObserver{
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    Text('Incrementing by: ${BlockProvider.of(context).incrementBy}',
+                    Text(
+                        'Incrementing by: ${BlockProvider.of(context).incrementBy}',
                         style: TextStyle(fontSize: 20)),
                     SizedBox(width: 10),
                     RaisedButton(
@@ -78,8 +74,9 @@ class _MyHomePageState extends State<MyHomePage> with  WidgetsBindingObserver{
                         color: Colors.blue,
                         splashColor: Colors.blue[200],
                         textColor: Colors.white,
-                        onPressed: (){
-                          BlockProvider.of(context).changeCurrentValue(ActionsTaken.INCREASE_INCREMENT);
+                        onPressed: () {
+                          BlockProvider.of(context).changeCurrentValue(
+                              ActionsTaken.INCREASE_INCREMENT);
                         },
                         child: Text('Increase increment')),
                   ],
@@ -88,9 +85,7 @@ class _MyHomePageState extends State<MyHomePage> with  WidgetsBindingObserver{
                   onPressed: () => Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => SetValues(
-
-                      ),
+                      builder: (context) => SetValues(),
                     ),
                   ),
                   child: Text("Set values manually"),
@@ -99,7 +94,7 @@ class _MyHomePageState extends State<MyHomePage> with  WidgetsBindingObserver{
             ),
           ),
           floatingActionButton: FloatingActionButton(
-            onPressed: (){
+            onPressed: () {
               BlockProvider.of(context).changeCurrentValue(ActionsTaken.RESET);
             },
             splashColor: Colors.blue[200],
@@ -107,10 +102,7 @@ class _MyHomePageState extends State<MyHomePage> with  WidgetsBindingObserver{
             child: Icon(Icons.refresh),
           ),
         );
-
       },
     );
-
-
   }
 }
