@@ -4,7 +4,6 @@ import 'package:first_project/models/models.dart';
 import 'package:flutter/material.dart';
 
 class BlockPattern {
-
   final _currentValueSubject = BehaviorSubject<int>();
 
   Stream<int> get currentValueStream => _currentValueSubject.stream;
@@ -12,15 +11,14 @@ class BlockPattern {
   int incrementBy = 1;
 
   void changeCurrentValue(dynamic action) {
-    if(action == ActionsTaken.INITIAL){
+    if (action == ActionsTaken.INITIAL) {
       _currentValueSubject.add(0);
       incrementBy = 1;
-    }
-    else{
+    } else {
       bool isSet = false;
       currentValueStream.listen((value) {
         print(value);
-        if(isSet == false){
+        if (isSet == false) {
           switch (action) {
             case ActionsTaken.INCREMENT:
               _currentValueSubject.add(value + incrementBy);
@@ -42,10 +40,8 @@ class BlockPattern {
           }
           isSet = true;
         }
-
       });
     }
-
   }
 
   void changeIncrementDecrement(int increment, int currentValue) {
@@ -55,7 +51,7 @@ class BlockPattern {
 }
 
 class BlockProvider extends InheritedWidget {
-  BlockPattern pattern;
+  final BlockPattern pattern;
 
   BlockProvider({Key key, BlockPattern getPattern, Widget child})
       : assert(getPattern != null),
@@ -68,6 +64,5 @@ class BlockProvider extends InheritedWidget {
   }
 
   static BlockPattern of(BuildContext context) =>
-      (context.inheritFromWidgetOfExactType(BlockProvider) as BlockProvider)
-          .pattern;
+      (context.dependOnInheritedWidgetOfExactType<BlockProvider>()).pattern;
 }

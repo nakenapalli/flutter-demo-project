@@ -1,15 +1,13 @@
 import 'package:first_project/ui/first_page.dart';
 import 'package:flutter/material.dart';
-import './set_values.dart';
 import 'block/block.dart';
-
 
 void main() {
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  BlockPattern pattern = BlockPattern();
+  final BlockPattern pattern = BlockPattern();
 
   @override
   Widget build(BuildContext context) {
@@ -25,5 +23,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-
