@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import './country.dart';
-import 'package:http/http.dart' as http;
+import './countries_api.dart' as api;
 import 'dart:convert';
 
 class CountriesList extends StatefulWidget {
@@ -16,7 +16,7 @@ class _CountriesListState extends State<CountriesList> {
   List<Country> countryList;
 
   _getCountries() {
-    fetchCountryList().then((response) => setState(() {
+    api.fetchCountryList().then((response) => setState(() {
           var data = json.decode(response.body);
           Iterable list = data['countryList'] as List;
           countryList = list.map((model) => Country.fromJson(model)).toList();
@@ -42,18 +42,5 @@ class _CountriesListState extends State<CountriesList> {
         ),
       ),
     );
-  }
-}
-
-Future fetchCountryList() async {
-  final response = await http.get(
-    'http://portal.cyberliver.com/user/countriesList',
-    headers: {"Accept": "application/json"},
-  );
-
-  if (response.statusCode == 200) {
-    return response;
-  } else {
-    throw Exception('Get request failed');
   }
 }
