@@ -17,7 +17,8 @@ class _CountriesListState extends State<CountriesList> {
 
   _getCountries() {
     fetchCountryList().then((response) => setState(() {
-          Iterable list = json.decode(response.body.countryList);
+          var data = json.decode(response.body);
+          Iterable list = data['countryList'] as List;
           countryList = list.map((model) => Country.fromJson(model)).toList();
         }));
   }
@@ -45,8 +46,10 @@ class _CountriesListState extends State<CountriesList> {
 }
 
 Future fetchCountryList() async {
-  final response =
-      await http.get('http://portal.cyberliver.com/user/countriesList');
+  final response = await http.get(
+    'http://portal.cyberliver.com/user/countriesList',
+    headers: {"Accept": "application/json"},
+  );
 
   if (response.statusCode == 200) {
     return response;
