@@ -46,6 +46,10 @@ class SampleUI extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Sample UI',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+      ),
       home: SamplePage(),
     );
   }
