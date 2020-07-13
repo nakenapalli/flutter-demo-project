@@ -46,16 +46,7 @@ class SamplePage extends StatelessWidget {
           runSpacing: 5.0,
           alignment: WrapAlignment.center,
           direction: Axis.horizontal,
-          children: <Widget>[
-            createCard("Sample card"),
-            createCard("Sample card"),
-            createCard("Sample card"),
-            createCard("Sample card"),
-            createCard("Sample card"),
-            createCard("Sample card"),
-            createCard("Sample card"),
-            createCard("Sample card"),
-          ],
+          children: List.generate(6, (index) => createCard("Sample card")),
         ),
       ),
     );
